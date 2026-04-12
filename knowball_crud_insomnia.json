@@ -1,0 +1,148 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-04-12",
+  "__export_source": "insomnia",
+  "resources": [
+    {
+      "_id": "wrk_knowball",
+      "_type": "workspace",
+      "name": "Knowball API",
+      "description": "CRUD completo - Championships e Teams"
+    },
+    {
+      "_id": "fld_championship",
+      "_type": "request_group",
+      "parentId": "wrk_knowball",
+      "name": "Championship"
+    },
+    {
+      "_id": "fld_team",
+      "_type": "request_group",
+      "parentId": "wrk_knowball",
+      "name": "Team"
+    },
+
+    {
+      "_id": "req_champ_create",
+      "_type": "request",
+      "parentId": "fld_championship",
+      "name": "Create Championship",
+      "method": "POST",
+      "url": "https://knowball-api.azurewebsites.net/championships",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Copa SP de Futebol Júnior\",\n  \"category\": \"SUB_20\",\n  \"year\": 2026\n}"
+      }
+    },
+    {
+      "_id": "req_champ_list",
+      "_type": "request",
+      "parentId": "fld_championship",
+      "name": "List Championships",
+      "method": "GET",
+      "url": "https://knowball-api.azurewebsites.net/championships",
+      "headers": [],
+      "body": {}
+    },
+    {
+      "_id": "req_champ_get",
+      "_type": "request",
+      "parentId": "fld_championship",
+      "name": "Get Championship by ID",
+      "method": "GET",
+      "url": "https://knowball-api.azurewebsites.net/championships/1",
+      "headers": [],
+      "body": {}
+    },
+    {
+      "_id": "req_champ_update",
+      "_type": "request",
+      "parentId": "fld_championship",
+      "name": "Update Championship",
+      "method": "PUT",
+      "url": "https://knowball-api.azurewebsites.net/championships/1",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Copa SP de Futebol Júnior - Edição Especial\",\n  \"category\": \"SUB_20\",\n  \"year\": 2026\n}"
+      }
+    },
+    {
+      "_id": "req_champ_delete",
+      "_type": "request",
+      "parentId": "fld_championship",
+      "name": "Delete Championship",
+      "method": "DELETE",
+      "url": "https://knowball-api.azurewebsites.net/championships/1",
+      "headers": [],
+      "body": {}
+    },
+
+    {
+      "_id": "req_team_create",
+      "_type": "request",
+      "parentId": "fld_team",
+      "name": "Create Team",
+      "method": "POST",
+      "url": "https://knowball-api.azurewebsites.net/teams",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"São Paulo FC\",\n  \"city\": \"São Paulo\",\n  \"state\": \"SP\"\n}"
+      }
+    },
+    {
+      "_id": "req_team_list",
+      "_type": "request",
+      "parentId": "fld_team",
+      "name": "List Teams",
+      "method": "GET",
+      "url": "https://knowball-api.azurewebsites.net/teams",
+      "headers": [],
+      "body": {}
+    },
+    {
+      "_id": "req_team_get",
+      "_type": "request",
+      "parentId": "fld_team",
+      "name": "Get Team by ID",
+      "method": "GET",
+      "url": "https://knowball-api.azurewebsites.net/teams/1",
+      "headers": [],
+      "body": {}
+    },
+    {
+      "_id": "req_team_update",
+      "_type": "request",
+      "parentId": "fld_team",
+      "name": "Update Team",
+      "method": "PUT",
+      "url": "https://knowball-api.azurewebsites.net/teams/1",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"São Paulo Futebol Clube\",\n  \"city\": \"São Paulo\",\n  \"state\": \"SP\"\n}"
+      }
+    },
+    {
+      "_id": "req_team_delete",
+      "_type": "request",
+      "parentId": "fld_team",
+      "name": "Delete Team",
+      "method": "DELETE",
+      "url": "https://knowball-api.azurewebsites.net/teams/1",
+      "headers": [],
+      "body": {}
+    }
+  ]
+}
