@@ -80,91 +80,44 @@ az sql server firewall-rule create \
 
 ---
 
-## 6. Criar o App Service Plan
+## Pipeline CI/CD — Azure DevOps
 
-```bash
-az appservice plan create \
-  --name planSites \
-  --resource-group rg-knowball \
-  --sku B1 \
-  --is-linux
-```
+O restante da infraestrutura e o deploy da aplicação são gerenciados pela pipeline no Azure DevOps.
 
----
+### Configuração do Azure DevOps
 
-## 7. Clonar o repositório
+**1. Criar a organização e o projeto**
+- Crie uma organização.
+- Crie um projeto chamado `knowball` (Private, Git, Agile)
 
-```bash
-git clone https://github.com/knowball-oracle/devops-knowball.git
-cd devops-knowball
-```
+**2. Criar o Service Connection com o Azure**
+- Vá em **Project Settings → Pipelines → Service connections**
+- Clique em **Create service connection → Azure Resource Manager**
+- Preencha:
+  - **Resource group:** `rg-knowball`
+  - **Service Connection Name:** `azure-knowball`
+  - Marque **Grant access permission to all pipelines**
 
----
-
-## 8. Criar o Web App
-
-```bash
-az webapp create \
-  --name knowball-api \
-  --resource-group rg-knowball \
-  --plan planSites \
-  --runtime "JAVA:17-java17"
-```
+**3. Criar a pipeline**
+- Vá em **Pipelines → Create Pipeline → GitHub**
+- Selecione o repositório
+- Configure your repository -> Starter pipeline
+- Substitua o conteúdo gerado pelo `azure-pipelines.yml` disponível na raiz do repositório e clique em **Save and run**
 
 ---
 
-## 9. Configurar variáveis de ambiente
-
-```bash
-az webapp config appsettings set \
-  --name knowball-api \
-  --resource-group rg-knowball \
-  --settings \
-  "DB_URL=jdbc:sqlserver://sql-knowball.database.windows.net:1433;databaseName=db-knowball;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;" \
-  "DB_USERNAME=user-knowball" \
-  "DB_PASSWORD=Fiap@2tdspa"
-```
-
----
-
-## 10. Compilar o projeto
-
-```bash
-mvn clean package -DskipTests
-```
-
----
-
-## 11. Realizar o deploy
-
-```bash
-az webapp deploy \
-  --name knowball-api \
-  --resource-group rg-knowball \
-  --src-path target/knowball-0.0.1-SNAPSHOT.jar \
-  --type jar
-```
-
-> O deploy pode levar alguns minutos. O terminal ficará exibindo `Status: Starting the site...` — aguarde até aparecer `Deployment successful` ou acompanhe os logs (passo 12).
-
----
-
-## 12. Acompanhar os logs
-
-```bash
-az webapp log tail --name knowball-api --resource-group rg-knowball
-```
-
-A aplicação está no ar quando aparecer:
-
-```
-Started App in X.XXX seconds (process running for X.XXX)
-```
+## Endpoints da API
 
 A API estará disponível em:
 
 ```
-https://knowball-api.azurewebsites.net
+https://app-knowball.azurewebsites.net
+```
+
+Documentação interativa (Swagger):
+
+```
+https://app-knowball.azurewebsites.net/swagger-ui.html
 ```
 
 ---
@@ -219,16 +172,6 @@ Valores aceitos para `category`: `SUB_13`, `SUB_15`, `SUB_17`, `SUB_20`
 
 ---
 
-## Documentação da API (Swagger)
-
-A documentação interativa está disponível em:
-
-```
-https://knowball-api.azurewebsites.net/swagger-ui.html
-```
-
----
-
 ## Limpeza dos recursos
 
 Para remover todos os recursos criados e evitar cobranças:
@@ -242,7 +185,7 @@ az group delete --name rg-knowball --yes --no-wait
 
 > 🎬 Clique no link para assistir no YouTube
 
-[Assista ao vídeo](https://youtu.be/bawC0tl42Gs?si=jGCAK973dvBb2pdf)
+[Assista ao vídeo](https://youtu.be/zLJqqWJSbko?si=ErkBA8X2R_Xu6IU0)
 
 
 ## Integrantes
@@ -252,4 +195,3 @@ az group delete --name rg-knowball --yes --no-wait
 | Gabriel Oliveira Rossi  | <a href="https://github.com/GabrielRossi01"><img src="https://avatars.githubusercontent.com/u/179617228?v=4" height="50" style="border-radius:30px;"></a> | Responsável pela concepção, implementação, testes e documentação da API Knowball. |
 | Rodrigo Naoki Yamasaki  | <a href="https://github.com/RodrygoYamasaki"><img src="https://avatars.githubusercontent.com/u/182231531?v=4" height="50" style="border-radius:30px;"></a> | Responsável pela participação nas etapas de design e revisão de código. |
 | Patrick Castro Quintana | <a href="https://github.com/castropatrick"><img src="https://avatars.githubusercontent.com/u/179931043?v=4" height="50" style="border-radius:30px;"></a> | Responsável pela participação nas etapas de design e revisão de código. |
-
