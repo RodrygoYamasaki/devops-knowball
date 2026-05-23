@@ -1,0 +1,86 @@
+trigger:
+  branches:
+    include:
+      - main
+ 
+pool:
+  vmImage: ubuntu-latest
+ 
+stages:
+ 
+- stage: Infraestrutura
+  displayName: 'Criar App Service e Web App'
+  jobs:
+  - job: CriarInfra
+    steps:
+    - task: AzureCLI@2
+      displayName: 'Provisionar App Service Plan e Web App'
+      inputs:
+        azureSubscription: 'azure-knowball'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          az appservice plan create \
+            --name plan-knowball \
+            --resource-group rg-knowball \
+            --location southafricanorth \
+            --sku B1 \
+            --is-linux
+ 
+          az webapp create \
+            --name app-knowball \
+            --resource-group rg-knowball \
+            --plan plan-knowball \
+            --runtime "JAVA:17-java17"
+ 
+          az webapp config appsettings set \
+            --name app-knowball \
+            --resource-group rg-knowball \
+            --settings \
+              SPRING_DATASOURCE_URL="jdbc:sqlserver://sql-knowball.database.windows.net:1433;database=db-knowball;encrypt=true;trustServerCertificate=false;" \
+              SPRING_DATASOURCE_USERNAME="user-knowball" \
+              SPRING_DATASOURCE_PASSWORD="Fiap@2tdspa" \
+              SPRING_JPA_HIBERNATE_DDL_AUTO="update" \
+              SPRING_JPA_DATABASE_PLATFORM="org.hibernate.dialect.SQLServerDialect"
+ 
+- stage: Build
+  displayName: 'Build com Maven'
+  dependsOn: Infraestrutura
+  jobs:
+  - job: BuildJar
+    steps:
+    - task: Maven@4
+      displayName: 'Compilar e empacotar JAR'
+      inputs:
+        mavenPomFile: 'pom.xml'
+        goals: 'clean package -DskipTests'
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: '1.17'
+ 
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publicar JAR como artefato'
+      inputs:
+        PathtoPublish: '$(System.DefaultWorkingDirectory)/target'
+        ArtifactName: 'knowball-jar'
+ 
+- stage: Deploy
+  displayName: 'Deploy no App Service'
+  dependsOn: Build
+  jobs:
+  - job: DeployApp
+    steps:
+    - task: DownloadBuildArtifacts@1
+      displayName: 'Baixar JAR artefato'
+      inputs:
+        buildType: 'current'
+        artifactName: 'knowball-jar'
+        downloadPath: '$(System.DefaultWorkingDirectory)'
+ 
+    - task: AzureWebApp@1
+      displayName: 'Deploy no Azure Web App'
+      inputs:
+        azureSubscription: 'azure-knowball'
+        appType: 'webAppLinux'
+        appName: 'app-knowball'
+        package: '$(System.DefaultWorkingDirectory)/knowball-jar/*.jar'
+        runtimeStack: 'JAVA|17-java17'
